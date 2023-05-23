@@ -132,12 +132,16 @@ class MainScreen extends StatelessWidget {
                                         //icon of text field
                                         labelStyle: TextStyle(fontSize: MediaQuery.of(context).size.height/75),
                                         labelText:
-                                            "Время (опционально)" //label text of field
+                                            "Время (опционально)"
                                         ),
                                     readOnly: true,
                                     // when true user cannot edit text
                                     onTap: () async {
                                       pickedTime = await showTimePicker(
+                                        builder: (context, child){
+                                          return MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+                                              child: child!);
+                                        },
                                           initialEntryMode:
                                               TimePickerEntryMode.input,
                                           // locale: Locale('ru'),

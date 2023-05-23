@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:promt_app/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'first_run_event.dart';
@@ -15,6 +16,7 @@ class FirstRunBloc extends Bloc<FirstRunEvent, FirstRunState> {
     final prefs = await SharedPreferences.getInstance();
     final isFirstRun = prefs.getBool('isFirstRun') ?? true;
     final birthday = prefs.getInt('birthday') ?? 0;
+    Constants.birthday = birthday;
     emit(GetFirstRunInfoState(isFirstRun, birthday));
 
   }

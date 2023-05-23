@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
+import '../constants.dart';
+
 part 'coin_event.dart';
 
 part 'coin_state.dart';
@@ -21,7 +23,7 @@ class CoinBloc extends Bloc<CoinEvent, CoinState> {
       "Спрашиваю у chatGPT...",
       "Пишу цыганке-гадалке из Instagram (запрещённое приложение на территории РФ)"
     ];
-    int random = DateTime.now().millisecondsSinceEpoch % (phrases.length);
+    int random = (DateTime.now().millisecondsSinceEpoch - Constants.birthday) % (phrases.length);
     emit(CoinLoadingState(phrases[random]));
     await Future.delayed(const Duration(seconds: 2));
     phrases.removeAt(random);
