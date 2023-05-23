@@ -11,7 +11,7 @@ class RandomBloc extends Bloc<RandomEvent, String> {
     on<RandomIntEvent>(_onGetRandom);
   }
   _onGetRandom(RandomIntEvent event , Emitter emit){
-    int range = event.endNumber - event.initNumber;
+    int range = event.endNumber - event.initNumber + 1;
     DateTime initTime = DateTime(1998, 10, 23, 05, 45);
       int result =
           DateTime.now().millisecondsSinceEpoch - initTime.millisecondsSinceEpoch;

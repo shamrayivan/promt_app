@@ -10,124 +10,123 @@ class RandomScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController controllerFirst = TextEditingController();
     TextEditingController controllerSecond = TextEditingController();
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(
-          color: Colors.amberAccent, //change your color here
-        ),
-        title: const Text(
-          "Рандом",
-          style: TextStyle(color: Colors.amberAccent),
-        ),
-        backgroundColor: Colors.black,
-      ),
-      body: MultiBlocProvider(
-        providers: [
-          BlocProvider<RandomBloc>(
-            create: (context) => RandomBloc(),
-          ),
-        ],
-        child: BlocBuilder<RandomBloc, String>(
-          builder: (context, state) {
-            var randomBloc = BlocProvider.of<RandomBloc>(context);
-            return Center(
-              child: Column(
-                // mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(height: MediaQuery.of(context).size.height/20,),
-                  Text(
-                    "Введите диапазон:",
-                    style: TextStyle(
-                        fontSize: MediaQuery
-                            .of(context)
-                            .size
-                            .height / 50),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery
-                            .of(context)
-                            .size
-                            .width / 3,
-                        child: TextField(
-                          inputFormatters: <TextInputFormatter>[
-                            // for below version 2 use this
-                            FilteringTextInputFormatter.allow(RegExp(r'[0-9-]')),
-
-// for version 2 and greater youcan also use this
-//                             FilteringTextInputFormatter.digitsOnly,
-
-                          ],
-                          controller: controllerFirst,
-                          decoration:
-                          const InputDecoration(labelText: "первое число"),
-                          keyboardType: TextInputType.number,
-
-                        ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery
-                            .of(context)
-                            .size
-                            .width / 3,
-                        child: TextField(
-                          inputFormatters: <TextInputFormatter>[
-                            // for below version 2 use this
-                            FilteringTextInputFormatter.allow(RegExp(r'[0-9-]')),
-// for version 2 and greater youcan also use this
-//                             FilteringTextInputFormatter.digitsOnly
-
-                          ],
-                          controller: controllerSecond,
-                          decoration:
-                          const InputDecoration(labelText: "второе число"),
-                          keyboardType: TextInputType.number,
-                        ),
-                      ),
-                      // TextField(),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  OutlinedButton(
-                      onPressed: () {
-                        if(int.parse(
-                            controllerFirst.value.text)< int.parse(
-                            controllerSecond.value.text)) {
-                          BlocProvider.of<RandomBloc>(context).add(RandomIntEvent(int.parse(
-                              controllerFirst.value.text), int.parse(
-                              controllerSecond.value.text)));
-                        }else ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Так нельзя! Первое число должно быть меньше")));
-                      },
-                      child: const Text("Сгенерировать")),
-                  Column(
-                    children: [
-                      const SizedBox(
-                        height: 100,
-                      ),
-                      const Text("Число:"),
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      Text(
-                        state,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery
-                                .of(context)
-                                .size
-                                .height / 25),
-                      ),
-                    ],
-                  ),
-                ],
+    return BlocProvider<RandomBloc>(
+      create: (context) => RandomBloc(),
+      child: BlocBuilder<RandomBloc, String>(
+        builder: (context, state) {
+          var randomBloc = BlocProvider.of<RandomBloc>(context);
+          return Scaffold(
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+            floatingActionButton: FloatingActionButton.extended(onPressed: () {
+              if (controllerFirst.value.text.isEmpty || controllerSecond.value.text.isEmpty){
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text(
+                        "Заполните все поля!", textAlign: TextAlign.center,)));
+              }
+              else if (int.parse(controllerFirst.value.text) <
+                  int.parse(controllerSecond.value.text)) {
+                randomBloc.add(RandomIntEvent(
+                    int.parse(controllerFirst.value.text),
+                    int.parse(controllerSecond.value.text)));
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text(
+                        "Первое число должно быть меньше",textAlign: TextAlign.center,)));
+              }
+            }, label: SizedBox(
+                width: MediaQuery.of(context).size.width / 2,
+                child: Text(
+                  "Сгенерировать",
+                  style: TextStyle(fontSize: MediaQuery.of(context).size.height/50,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                )),
+            backgroundColor: Colors.black,),
+            appBar: AppBar(
+              iconTheme: const IconThemeData(
+                color: Colors.white, //change your color here
               ),
-            );
-          },
-        ),
+              title: const Text(
+                "Рандом",
+                style: TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.black,
+            ),
+            body: Center(
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height / 20,
+                        ),
+                        Text(
+                          "Введите диапазон:",
+                          style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.height / 50),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width / 3,
+                              child: TextField(
+                                cursorColor: Colors.black,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'[0-9-]')),
+                                ],
+                                controller: controllerFirst,
+                                decoration: const InputDecoration(
+                                    labelStyle: TextStyle(color: Colors.black),
+                                    labelText: "первое число"),
+                                keyboardType: TextInputType.number,
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width / 3,
+                              child: TextField(
+                                cursorColor: Colors.black,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'[0-9-]')),
+                                ],
+                                controller: controllerSecond,
+                                decoration: const InputDecoration(
+                                  labelStyle: TextStyle(color: Colors.black),
+                                    labelText: "второе число",),
+                                keyboardType: TextInputType.number,
+                              ),
+                            ),
+                            // TextField(),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Column(
+                          children: [
+                            const SizedBox(
+                              height: 100,
+                            ),
+                            const Text("Число:"),
+                            const SizedBox(
+                              height: 50,
+                            ),
+                            Text(
+                              state,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                      MediaQuery.of(context).size.height / 25),
+                            ),
+                          ],
+                        ),
+                      ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
