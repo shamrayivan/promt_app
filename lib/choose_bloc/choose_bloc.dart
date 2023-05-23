@@ -9,30 +9,37 @@ import 'package:promt_app/constants.dart';
 part 'choose_event.dart';
 part 'choose_state.dart';
 
-class ChooseBloc extends Bloc<ChooseEvent, List<TextEditingController>> {
-  ChooseBloc() : super([TextEditingController()]) {
+class ChooseBloc extends Bloc<ChooseEvent, ChooseState> {
+  ChooseBloc() : super(ChooseInitial()) {
     on<AddNewTextFieldEvent>(_addChoose);
     on<DeleteNewTextFieldEvent>(_deleteChoose);
     on<GenerateAnswerEvent>(_generateAnswer);
   }
 
   _addChoose(AddNewTextFieldEvent event, Emitter emit){
+    event.listController.add(TextEditingController());
+    emit(AddChooseState(event.listController));
     // event.getControllers.add(TextEditingController());
-    state.add(TextEditingController());
-    emit(state.toList());
+    // state.add(TextEditingController());
+    // emit(state.toList());
   }
 
   _deleteChoose(DeleteNewTextFieldEvent event, Emitter emit){
-    state.removeAt(event.index);
-    emit(state.toList());
+    if(event.listController.length > 1){
+    event.listController.removeAt(event.index);
+    emit(DeleteChooseState(event.listController));}
+    else {}
   }
+
+
   _generateAnswer(GenerateAnswerEvent event, Emitter emit){
-    int random = (DateTime.now().millisecondsSinceEpoch - Constants.birthday)% event.variant.length;
-    print(random);
-    print("event.variant ${event.variant}");
-    List <TextEditingController> a = [];
-    a.add(state[random]);
-    emit(a);
+    int random = (DateTime.now().millisecondsSinceEpoch - Constants.birthday) % event.listController.length;
+    print("kolvo ${event.listController.length}");
+    emit(GenerateAnswerState(event.listController[random].value.text));
+    // event.variant
+    // emit(GenerateAnswerState());
+    // a.add(state[random]);
+    // emit(a);
     // state.removeLast();
   }
 }

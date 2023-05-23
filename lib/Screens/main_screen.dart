@@ -56,12 +56,24 @@ class MainScreen extends StatelessWidget {
                 : null,
             appBar: AppBar(
               actions: [
-                IconButton(onPressed: ()async{
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.remove('isFirstRun');
-                  await prefs.remove('birtday');
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: GestureDetector(
+                    onTap: ()async{
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.remove('isFirstRun');
+                      await prefs.remove('birtday');
 
-                }, icon: Icon(Icons.settings, color: Colors.black,))
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.change_circle, color: Colors.black,),
+                        Text("изменить дату",textAlign: TextAlign.center, style: TextStyle(fontSize: kToolbarHeight/5, fontWeight: FontWeight.w600,),)
+                      ],
+                    ),
+                  ),
+                )
               ],
               backgroundColor: Theme.of(context).colorScheme.inversePrimary,
               title: const Text("Умный советчик"),

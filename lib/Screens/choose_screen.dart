@@ -4,9 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:promt_app/choose_bloc/choose_bloc.dart';
 
 class ChooseScreen extends StatelessWidget {
-  ChooseScreen({Key? key}) : super(key: key);
+  static final List<TextEditingController> controllers = [
+    TextEditingController(),
+  ];
 
-  // final List<TextEditingController> controllers = [TextEditingController(),];
+  ChooseScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +18,9 @@ class ChooseScreen extends StatelessWidget {
           create: (context) => ChooseBloc(),
         ),
       ],
-      child: BlocBuilder<ChooseBloc, List<TextEditingController>>(
+      child: BlocBuilder<ChooseBloc, ChooseState>(
         builder: (context, state) {
+          ScrollController scrollController = ScrollController();
           return Scaffold(
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
@@ -26,22 +29,28 @@ class ChooseScreen extends StatelessWidget {
                 onPressed: () {
                   List<String> a = [];
                   bool showSnackBar = false;
-                  state.forEach((element) {
-                    if(element.value.text == "" ){
+
+                  controllers.forEach((element) {
+                    if (element.value.text == "") {
                       showSnackBar = true;
-                    }else {
+                    } else {
                       a.add(element.value.text);
                       print(' a - $a');
-                    }});
-                  if (showSnackBar) {ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Есть пустые поля")));}
-                  else if(a.length != 0) {BlocProvider.of<ChooseBloc>(context)
-                      .add(GenerateAnswerEvent(a));
-                  showDialog(context: context, builder: (context){
-                    return AlertDialog(
-                      title: Text(state.length.toString()),
-                    );
+                    }
                   });
-                };},
+                  if (showSnackBar) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Есть пустые поля", textAlign: TextAlign.center,)));
+                  } else {
+                    // if(a.length != 0){
+                    BlocProvider.of<ChooseBloc>(context)
+                        .add(GenerateAnswerEvent(controllers));
+                  }
+                  if (state is GenerateAnswerState) {
+                    print("hi");
+                  }
+                  // };
+                },
                 label: Text(
                   "Выбрать подходящий вариант",
                   style: TextStyle(
@@ -61,93 +70,150 @@ class ChooseScreen extends StatelessWidget {
             ),
             body: ListView(
               children: [
-                const Padding(
-                  padding: EdgeInsets.all(20.0),
-                  child: Text(
-                    "Впишите все возможные действия или исходы, а мы подскажем какой вариант выбрать",
-                    textAlign: TextAlign.center,
+                // SizedBox(height: 10,),
+                  Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                      "Впишите все возможные действия или исходы, а мы подскажем какой вариант выбрать",
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ),
-                SizedBox(
+                Container(
                   height: MediaQuery.of(context).size.height / 2,
                   child: ListView.builder(
+                      controller: scrollController,
                       shrinkWrap: true,
-                      itemCount: state.length,
+                      itemCount: controllers.length,
                       itemBuilder: (context, index) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        return Column(
                           children: [
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width / 1.5,
-                              child: TextField(
-                                maxLines: null,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                                cursorColor: Colors.black,
-                                controller: state[index],
-                                decoration: InputDecoration(
-                                    labelStyle:
-                                        const TextStyle(color: Colors.black),
-                                    floatingLabelAlignment:
-                                        FloatingLabelAlignment.center,
-                                    labelText: "Вариант ${index + 1}"),
-                              ),
-                            ),
-                            GestureDetector(
-                              child: const Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.remove_circle_outline,
-                                    color: Color(0xFFEB0072),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width / 1.5,
+                                  child: TextField(
+                                    maxLines: null,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                    cursorColor: Colors.black,
+                                    controller: controllers[index],
+                                    decoration: InputDecoration(
+                                        labelStyle: const TextStyle(
+                                            color: Colors.black),
+                                        floatingLabelAlignment:
+                                            FloatingLabelAlignment.center,
+                                        labelText: "Вариант ${index + 1}"),
                                   ),
-                                  Text(
-                                    "удалить",
-                                    style: TextStyle(
-                                      color: Color(0xFFEB0072),
+                                ),
+                                GestureDetector(
+                                  child: const Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.remove_circle_outline,
+                                        color: Color(0xFFEB0072),
+                                      ),
+                                      Text(
+                                        "удалить",
+                                        style: TextStyle(
+                                          color: Color(0xFFEB0072),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  onTap: () {
+                                    if (controllers.length > 1) {
+                                      BlocProvider.of<ChooseBloc>(context).add(
+                                          DeleteNewTextFieldEvent(
+                                              index, controllers));
+                                    } else
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  "Нельзя удалить единственный элемент",textAlign: TextAlign.center,)));
+                                  },
+                                ),
+                              ],
+                            ),
+                            if (index == controllers.length - 1)
+                              Column(
+                                children: [
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height /
+                                        100,
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      // if (state is AddChooseState) {
+                                      BlocProvider.of<ChooseBloc>(context).add(
+                                          AddNewTextFieldEvent(controllers));
+                                      // }
+                                      // else {
+                                      //   print(state.toString());
+                                      // }
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Icon(
+                                          Icons.add_box_outlined,
+                                          size: MediaQuery.of(context)
+                                                  .size
+                                                  .height /
+                                              20,
+                                          color: const Color(0xFFEB0072),
+                                        ),
+                                        const Text(
+                                          "добавить вариант",
+                                          style: TextStyle(
+                                            color: Color(0xFFEB0072),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
                               ),
-                              onTap: () {
-                                BlocProvider.of<ChooseBloc>(context)
-                                    .add(DeleteNewTextFieldEvent(index));
-                              },
-                            )
                           ],
                         );
                       }),
                 ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height / 20,
+                const Divider(
+                  thickness: 5,
                 ),
-                GestureDetector(
-                  onTap: () {
-                    // if (state is AddChooseState) {
-                    BlocProvider.of<ChooseBloc>(context)
-                        .add(AddNewTextFieldEvent());
-                    // }
-                    // else {
-                    //   print(state.toString());
-                    // }
-                  },
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.add_box_outlined,
-                        size: MediaQuery.of(context).size.height / 20,
-                        color: const Color(0xFFEB0072),
-                      ),
-                      const Text(
-                        "добавить вариант",
-                        style: TextStyle(
-                          color: Color(0xFFEB0072),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
+                if (state is GenerateAnswerState)
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Container(
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Color(0xE6EB0072),
+                            // border: Border.all(
+                            //     width: 2, color: const Color(0xFAEB0072)),
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Column(children: [
+                          Text(
+                            "Да что тут думать, конечно же!",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize:
+                                MediaQuery.of(context).size.height / 60,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          Text(
+                            state.answer,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize:
+                                MediaQuery.of(context).size.height / 40,
+                                fontWeight: FontWeight.bold),
+                          )
+                        ])),
+                  )
               ],
             ),
           );
