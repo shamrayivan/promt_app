@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:promt_app/Screens/choose_screen.dart';
 import 'package:promt_app/Screens/coin_screen.dart';
 import 'package:promt_app/Screens/main_screen.dart';
@@ -16,6 +17,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', ''),
+        Locale('ru', ''), // arabic, no country code
+      ],
       initialRoute: '/',
       routes: {
         '/': (context) => const MainScreen(),
