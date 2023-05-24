@@ -53,6 +53,13 @@ class RandomScreen extends StatelessWidget {
                 )),
             backgroundColor: Colors.black,),
             appBar: AppBar(
+              leading:  IconButton(
+                icon:  Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+                onPressed: () async{
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  await Future.delayed(Duration(milliseconds: 200));
+                  Navigator.of(context).pop();},
+              ),
               iconTheme: const IconThemeData(
                 color: Colors.white, //change your color here
               ),
@@ -89,7 +96,7 @@ class RandomScreen extends StatelessWidget {
                                 decoration: const InputDecoration(
                                     labelStyle: TextStyle(color: Colors.black),
                                     labelText: "первое число"),
-                                keyboardType: const TextInputType.numberWithOptions(signed:true),
+                                keyboardType:  const TextInputType.numberWithOptions(signed: true),
                               ),
                             ),
                             SizedBox(
