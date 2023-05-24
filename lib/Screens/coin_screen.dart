@@ -13,7 +13,7 @@ class CoinScreen extends StatelessWidget {
         builder: (context, state) {
           return Scaffold(
               floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerDocked,
+                  FloatingActionButtonLocation.centerFloat,
               floatingActionButton: FloatingActionButton.extended(
                 backgroundColor: const Color(0xFF028E9B),
                 foregroundColor: Colors.white,

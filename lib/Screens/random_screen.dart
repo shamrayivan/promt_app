@@ -16,7 +16,7 @@ class RandomScreen extends StatelessWidget {
         builder: (context, state) {
           var randomBloc = BlocProvider.of<RandomBloc>(context);
           return Scaffold(
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
             floatingActionButton: FloatingActionButton.extended(onPressed: () {
               print('${controllerFirst.text.isEmpty}');
               if (controllerFirst.value.text.isEmpty || controllerSecond.value.text.isEmpty){
