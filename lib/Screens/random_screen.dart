@@ -18,22 +18,31 @@ class RandomScreen extends StatelessWidget {
           return Scaffold(
             floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
             floatingActionButton: FloatingActionButton.extended(onPressed: () {
+              print('${controllerFirst.text.isEmpty}');
               if (controllerFirst.value.text.isEmpty || controllerSecond.value.text.isEmpty){
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text(
                         "Заполните все поля!", textAlign: TextAlign.center,)));
+              }
+              else if (controllerFirst.value.text.contains("-", 1) ||
+                  controllerSecond.value.text.contains("-", 1)) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text(
+                      "Минус должен быть только перед числом",textAlign: TextAlign.center,)));
               }
               else if (int.parse(controllerFirst.value.text) <
                   int.parse(controllerSecond.value.text)) {
                 randomBloc.add(RandomIntEvent(
                     int.parse(controllerFirst.value.text),
                     int.parse(controllerSecond.value.text)));
-              } else {
+              }
+              else {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text(
                         "Первое число должно быть меньше",textAlign: TextAlign.center,)));
               }
-            }, label: SizedBox(
+            }
+            , label: SizedBox(
                 width: MediaQuery.of(context).size.width / 2,
                 child: Text(
                   "Сгенерировать",
@@ -80,7 +89,7 @@ class RandomScreen extends StatelessWidget {
                                 decoration: const InputDecoration(
                                     labelStyle: TextStyle(color: Colors.black),
                                     labelText: "первое число"),
-                                keyboardType: TextInputType.number,
+                                keyboardType: const TextInputType.numberWithOptions(signed:true),
                               ),
                             ),
                             SizedBox(
@@ -88,14 +97,14 @@ class RandomScreen extends StatelessWidget {
                               child: TextField(
                                 cursorColor: Colors.black,
                                 inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.allow(
-                                      RegExp(r'[0-9-]')),
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'[0-9-]'))
                                 ],
                                 controller: controllerSecond,
                                 decoration: const InputDecoration(
                                   labelStyle: TextStyle(color: Colors.black),
                                     labelText: "второе число",),
-                                keyboardType: TextInputType.number,
+                                keyboardType:  const TextInputType.numberWithOptions(signed: true),
                               ),
                             ),
                             // TextField(),

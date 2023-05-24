@@ -181,6 +181,11 @@ class MainScreen extends StatelessWidget {
                           ),
                         ],
                       ),
+                      SizedBox(height: (MediaQuery.of(context).size.height - kToolbarHeight)/3,),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Text("Верите ли Вы в магию чисел?\n\n Приложение поможет выбрать Вам именно то, что необходимо. Для начала просто введите данные своего дня Рождения.", textAlign: TextAlign.center, style: TextStyle(fontSize: (MediaQuery.of(context).size.height - kToolbarHeight)/50),),
+                      ),
                     ],
                   ))
                 : Stack(children: [
